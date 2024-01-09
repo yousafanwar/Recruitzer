@@ -5,7 +5,7 @@ const config = {
 	dbName: 'recruitzi',
 	dbUser: 'postgres',
 	dbPassword: 'Blackwind@007',
-    appPort: 3000
+	appPort: 3000
 };
 
 export default config;
