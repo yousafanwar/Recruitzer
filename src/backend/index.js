@@ -18,3 +18,4 @@ app.get('/api/user/:id', async function(req, res){
 app.listen(config.appPort, function () { 
 	console.log('Server listining on port 3000');
 });
+
