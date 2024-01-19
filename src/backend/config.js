@@ -1,5 +1,4 @@
 const config = {
-
 	dbHost: 'localhost',
 	dbPort: 5432,
 	dbName: 'recruitzi',
