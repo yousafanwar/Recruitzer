@@ -7,11 +7,11 @@ export const authenticate = function (req, res, next) {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
 	if (token == null) {
-		res.sendStatus(401).send('Token not provided');
+		res.status(401).send('Token not provided');
 	}
 	jwt.verify(token, config.secret, function (error) {
 		if (error) {
-			res.sendStatus(401).send('Login Unsuccessful');
+			res.status(401).send('Login Unsuccessful');
 		} else {
 			next();
 		}
