@@ -1,25 +1,26 @@
 {
-  "name": "recruitzi",
-  "type": "module",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "format": "eslint ./ --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Yousaf",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3"
-  },
-  "devDependencies": {
-    "eslint": "^8.56.0"
-  }
+	"name": "recruitzi",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"format": "prettier --write ./ && eslint ./ --fix",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Yousaf",
+	"license": "ISC",
+	"dependencies": {
+		"bcrypt": "^5.1.1",
+		"express": "^4.18.2",
+		"jsonwebtoken": "^9.0.2",
+		"pg": "^8.11.3"
+	},
+	"devDependencies": {
+		"eslint": "^8.56.0",
+		"prettier": "3.2.4"
+	}
 }
