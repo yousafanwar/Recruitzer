@@ -5,7 +5,9 @@ import authRoutes from './routes/auth.js';
 
 let app = express();
 app.use(express.json());
+
 app.use('/api/', authRoutes);
+
 app.use('/api/user/', userRoutes);
 
 app.listen(config.appPort, function () {
