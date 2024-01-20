@@ -22,12 +22,12 @@ export const login = async function (req, res) {
 	const { email, password } = req.body;
 	const dbRes = await db.query('SELECT * from users where email = $1', [email]);
 	if (dbRes.rowCount < 1) {
-		return res.sendStatus(401).send('Invalid Email or password');
+		return res.status(401).send('Invalid Email or password');
 	}
 	const hash = dbRes.rows[0].password;
 	bcrypt.compare(password, hash, async function (err) {
 		if (err) {
-			return res.sendStatus(401).send('Invalid Email or password');
+			return res.status(401).send('Invalid Email or password');
 		} else {
 			let token = jwt.sign({ email: email }, config.secret);
 			res.json(token);
