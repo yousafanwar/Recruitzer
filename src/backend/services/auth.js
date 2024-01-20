@@ -1,6 +1,6 @@
-import pool from './db.js';
+import * as db from '../db/db.js';
 import jwt from 'jsonwebtoken';
-import config from './config.js';
+import config from '../config.js';
 import bcrypt from 'bcrypt';
 
 export const authenticate = function (req, res, next) {
@@ -20,7 +20,7 @@ export const authenticate = function (req, res, next) {
 
 export const login = async function (req, res) {
 	const { email, password } = req.body;
-	const dbRes = await pool.query('SELECT * from users where email = $1', [email]);
+	const dbRes = await db.query('SELECT * from users where email = $1', [email]);
 	if (dbRes.rowCount < 1) {
 		return res.sendStatus(401).send('Invalid Email or password');
 	}

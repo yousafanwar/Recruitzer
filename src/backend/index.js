@@ -1,17 +1,12 @@
 import express from 'express';
 import config from './config.js';
-import * as userRepository from './user.js';
-import * as auth from './auth.js';
+import userRoutes from './routes/user.js';
+import indexRoutes from './routes/index.js';
 
 let app = express();
 app.use(express.json());
-
-app.get('/api/user', auth.authenticate, userRepository.getUsers);
-app.get('/api/user/:id', auth.authenticate, userRepository.getUser);
-app.post('/api/user', auth.authenticate, userRepository.addUser);
-app.put('/api/user', auth.authenticate, userRepository.updateUser);
-
-app.post('/api/login', auth.login);
+app.use('/api/', indexRoutes);
+app.use('/api/user/', userRoutes);
 
 app.listen(config.appPort, function () {
 	console.log('Server listining on port 3000');
