@@ -25,8 +25,8 @@ export const login = async function (req, res) {
 		return res.status(401).send('Invalid Email or password');
 	}
 	const hash = dbRes.rows[0].password;
-	bcrypt.compare(password, hash, async function (err) {
-		if (err) {
+	bcrypt.compare(password, hash, async function (err, result) {
+		if (err || !result) {
 			return res.status(401).send('Invalid Email or password');
 		} else {
 			let token = jwt.sign({ email: email }, config.secret);
