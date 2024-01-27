@@ -9,4 +9,5 @@ userRoutes.get('/:id', auth.authenticate, userRepository.getUser);
 userRoutes.post('/', auth.authenticate, userRepository.addUser);
 userRoutes.put('/', auth.authenticate, userRepository.updateUser);
 
+userRoutes.put('/delete', auth.authenticate, userRepository.deleteUser);
 export default userRoutes;
