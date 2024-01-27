@@ -11,10 +11,10 @@ export const getUsers = async function (req, res) {
 export const getUser = async function (req, res) {
 	let userId = req.params.id;
 	const dbRes = await db.query('SELECT * from users where id = $1 and isDeleted = false', [userId]);
-	if(dbRes.rowCount > 0 && dbRes.rows[0].isDeleted == true){
-		res.send('User does not exists').sendStatus(400); // Why this status is not being displayed?	
-	}else{
+	if (dbRes.rowCount > 0) {
 		res.send(dbRes.rows[0]);
+	} else {
+		res.send('User does not exists').sendStatus(404);
 	}
 };
 
@@ -38,18 +38,9 @@ export const updateUser = async function (req, res) {
 	res.sendStatus(200);
 };
 
-export const deleteUser = async function(req, res){
-	const {email, password} = req.body;
-	const dbRes = await db.query('SELECT * FROM public.users where email = $1;', [email]);
+export const deleteUser = async function (req, res) {
+	const id = req.params.id;
 
-	let hash = dbRes.rows[0].password;
-
-	bcrypt.compare(password, hash, function(err, result) {
-		if(err || !result){
-			res.sendStatus(401);
-		}else{
-			db.query(`UPDATE public.users SET email='delete@example.com', isdeleted=true, deletedemail=$1 WHERE email=$1`,[email])
-			res.send(dbRes.rows[0]);
-		}
-	});
-}
+	db.query('UPDATE public.users SET isdeleted=true WHERE id=$1', [id]);
+	res.sendStatus(200);
+};

@@ -30,16 +30,10 @@ export const login = async function (req, res) {
 	bcrypt.compare(password, hash, async function (err, result) {
 		if (err || !result) {
 			res.send('Invalid Password').sendStatus(401);
-			
-			// return;
 		} else {
-			// let token = jwt.sign({ email: email }, config.secret);
-			// res.json(token);
-			jwt.sign({ email }, config.secret, function(err, token) {
+			jwt.sign({ email }, config.secret, function (err, token) {
 				res.json(token);
-			  });
-
-
+			});
 		}
 	});
 };
