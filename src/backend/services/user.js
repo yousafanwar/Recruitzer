@@ -19,14 +19,14 @@ export const getUser = async function (req, res) {
 };
 
 export const addUser = async function (req, res) {
-	const { firstname, lastname, dob, cell, email, password } = req.body;
+	const { firstname, lastname, dob, cell, email, password, roleId } = req.body;
 	let dbRes = await db.query('SELECT * from users where email = $1', [email]);
 	if (dbRes.rowCount > 0) {
 		console.log(`User with email ${email} already exists`);
 		return res.status(409);
 	}
 	bcrypt.hash(password, config.saltRounds, async function (err, hash) {
-		dbRes = await db.query('INSERT INTO public.users(firstname, lastname, dob, cell, email, "password") VALUES($1, $2, $3, $4, $5, $6) returning *;', [firstname, lastname, dob, cell, email, hash]);
+		dbRes = await db.query('INSERT INTO public.users(firstname, lastname, dob, cell, email, "password", roleId) VALUES($1, $2, $3, $4, $5, $6, $7) returning *;', [firstname, lastname, dob, cell, email, hash, roleId]);
 		res.send(dbRes.rows[0]);
 	});
 };
