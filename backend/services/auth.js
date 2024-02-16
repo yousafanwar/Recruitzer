@@ -26,13 +26,12 @@ export const login = async function (req, res) {
 	}
 
 	const hash = dbRes.rows[0].password;
-
 	bcrypt.compare(password, hash, async function (err, result) {
 		if (err || !result) {
 			res.send('Invalid Password').sendStatus(401);
 		} else {
 			jwt.sign({ email }, config.secret, function (err, token) {
-				res.json(token);
+				res.json([token, dbRes.rows[0].roleid]);
 			});
 		}
 	});

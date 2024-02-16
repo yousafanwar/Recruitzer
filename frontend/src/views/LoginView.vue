@@ -23,7 +23,7 @@ export default {
 	data(){
 		return{
 			email: '',
-			password: ''
+			password: '',
 		}
 	},
 	methods: {
@@ -40,7 +40,9 @@ export default {
 				if (!response.ok) {
 					throw new Error('Failed to login');
 				}
-				const token = await response.json();
+				const result = await response.json();
+				const [token, roleId] = result;
+				localStorage.setItem('roleId', roleId);
 				router.push('./'); 
 			} catch (error) {
 				this.errorMessage = 'Invalid email or password';
