@@ -11,7 +11,7 @@
 			</div>
 		</li>
 		<li>
-			<a href="/apps" class="white-text waves-effect" v-if="admin"><i class="material-icons">supervisor_account</i>Admin</a>
+			<a href="/apps" class="white-text waves-effect" v-if="isAdmin"><i class="material-icons">supervisor_account</i>Admin</a>
 		</li>
 		<li>
 			<a href="/entities" class="white-text waves-effect"><i class="material-icons">widgets</i>Two</a>
@@ -30,12 +30,11 @@
 
 <script>
 	import * as M from 'materialize-css/dist/js/materialize.min.js';
-	import * as login from '../views/LoginView.vue';
 
 	export default {
 		data(){
 			return{
-				admin: localStorage.getItem('roleId') == 1
+				isAdmin: localStorage.getItem('loggedInUser').roleId == 1
 			}
 		},
 		mounted() {

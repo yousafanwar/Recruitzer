@@ -41,8 +41,9 @@ export default {
 					throw new Error('Failed to login');
 				}
 				const result = await response.json();
-				const [token, roleId] = result;
-				localStorage.setItem('roleId', roleId);
+				// const [token, roleId] = result;
+				localStorage.setItem('loggedInUser', result);
+				console.log(result);
 				router.push('./'); 
 			} catch (error) {
 				this.errorMessage = 'Invalid email or password';

@@ -31,7 +31,13 @@ export const login = async function (req, res) {
 			res.send('Invalid Password').sendStatus(401);
 		} else {
 			jwt.sign({ email }, config.secret, function (err, token) {
-				res.json([token, dbRes.rows[0].roleid]);
+				// res.json([token, dbRes.rows[0].roleid]);
+				res.json({
+					email: dbRes.rows[0].email,
+					firstName: dbRes.rows[0].firstname,
+					lastName: dbRes.rows[0].lastname,
+					roleId: dbRes.rows[0].roleid
+				})
 			});
 		}
 	});
