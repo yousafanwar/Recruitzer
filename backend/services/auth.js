@@ -33,6 +33,7 @@ export const login = async function (req, res) {
 			jwt.sign({ email }, config.secret, function (err, token) {
 				// res.json([token, dbRes.rows[0].roleid]);
 				res.json({
+					token: token,
 					email: dbRes.rows[0].email,
 					firstName: dbRes.rows[0].firstname,
 					lastName: dbRes.rows[0].lastname,
