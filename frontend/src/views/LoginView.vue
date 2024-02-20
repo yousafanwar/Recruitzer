@@ -41,8 +41,7 @@ export default {
 					throw new Error('Failed to login');
 				}
 				const result = await response.json();
-				// const [token, roleId] = result;
-				localStorage.setItem('loggedInUser', result);
+				localStorage.setItem('loggedInUser', JSON.stringify(result));
 				console.log(result);
 				router.push('./'); 
 			} catch (error) {

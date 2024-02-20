@@ -34,12 +34,19 @@
 	export default {
 		data(){
 			return{
-				isAdmin: localStorage.getItem('loggedInUser').roleId == 1
+				isAdmin: false
 			}
 		},
 		mounted() {
 			var elem = this.$refs.sidenav;
 			M.Sidenav.init(elem);
+			this.checkAdmin();
+		},
+		methods:{
+			checkAdmin(){
+				const obj = JSON.parse(localStorage.getItem('loggedInUser'));
+				this.isAdmin = obj.roleId == 1;
+			}
 		}
 	};
 </script>
