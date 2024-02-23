@@ -3,7 +3,8 @@ import config from '../config.js';
 import * as db from '../db/db.js';
 
 export const getUsers = async function (req, res) {
-	const dbRes = await db.query('SELECT * from users where isDeleted = False');
+	// const dbRes = await db.query('SELECT * from users where isDeleted = False');
+	const dbRes = await db.query('select users.id, users.firstName, users.lastName,	users.DOB, users.cell,	users.email, users.password, users.isDeleted, roles.title from roles join users on users.roleid = roles.id where isDeleted = False');
 	res.send(dbRes.rows);
 };
 
