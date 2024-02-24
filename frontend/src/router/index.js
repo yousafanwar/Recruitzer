@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
-import UserListings from '../views/UserListings.vue';
-import IndividualUserListing from '../views/IndividualUserListing.vue';
+import Users from '../views/Users/List.vue';
+import User from '../views/Users/Edit.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,14 +18,14 @@ const router = createRouter({
 			component: LoginView
 		},
 		{
-			path: '/listings',
-			name: 'userListings',
-			component: UserListings
+			path: '/users',
+			name: 'users',
+			component: Users
 		},
 		{
-			path: '/indListing/:userId',
-			name: 'IndividualUserListing',
-			component: IndividualUserListing,
+			path: '/user/:userId',
+			name: 'user',
+			component: User,
 			props: true
 		}
 	]

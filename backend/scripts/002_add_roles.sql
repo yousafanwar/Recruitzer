@@ -18,3 +18,5 @@ VALUES('Temp');
 alter table users add column roleId int; 
 
 alter table users add constraint FK_role foreign key (roleId) references roles(id);
+
+update public.users set roleId = 1;

@@ -29,7 +29,8 @@
 </template>
 
 <script>
-	import * as M from 'materialize-css/dist/js/materialize.min.js';
+	import router from '@/router';
+import * as M from 'materialize-css/dist/js/materialize.min.js';
 
 	export default {
 		data(){
@@ -44,7 +45,11 @@
 		},
 		methods:{
 			checkAdmin(){
-				const obj = JSON.parse(localStorage.getItem('loggedInUser'));
+				let user = localStorage.getItem('loggedInUser');
+				if(!user){
+					return router.push('/login');
+				}
+				const obj = JSON.parse(user);
 				this.isAdmin = obj.roleId == 1;
 			}
 		}

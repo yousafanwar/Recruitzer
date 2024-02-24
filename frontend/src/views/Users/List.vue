@@ -1,9 +1,9 @@
 <template>
     <NavBar />
     <SideBar />
-    <div>
-     <h3>Total Users: {{ userCount }} </h3>   
-    <table class="highlight centered responsive-table">
+    <div class="container">
+     <h3>Users</h3>   
+    <table class="striped responsive-table">
         <thead>
             <tr>
                 <th>First Name / Last Name</th>
@@ -53,12 +53,13 @@ import router from '@/router';
         };
     },
     mounted() {
-        this.getLoginData();
         this.fetchData();
+        this.getLoginData();
         this.openModelFunc();
     },
     methods: {
         async fetchData() {
+            debugger;
             try {
                 const response = await fetch('http://localhost:3000/api/user', {
                     headers: {
@@ -67,6 +68,9 @@ import router from '@/router';
                 });
                 if (!response.ok) {
                     console.log("Failed to get the all users data", this.token);
+                }
+                if(response.status === 401){
+                    router.push('/login');
                 }
                 const result = await response.json();
                 console.log(result);
@@ -86,7 +90,7 @@ import router from '@/router';
             this.userId = user.id;
             console.log(this.userId);
             // router.push('./indListing');
-            router.push({ name: 'IndividualUserListing', params: { userId: this.userId } });
+            router.push({ name: 'user', params: { userId: this.userId } });
         },
         openModelFunc(){
             document.addEventListener('DOMContentLoaded', function() {
