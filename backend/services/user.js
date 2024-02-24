@@ -4,7 +4,9 @@ import * as db from '../db/db.js';
 
 export const getUsers = async function (req, res) {
 	// const dbRes = await db.query('SELECT * from users where isDeleted = False');
-	const dbRes = await db.query(`select users.id, users.firstName, users.lastName, users.DOB, users.cell, users.email, users.password, users.isDeleted, roles.title as role from users full outer join roles on users.roleid = roles.id where isDeleted = False`);
+	const dbRes = await db.query(
+		'select users.id, users.firstName, users.lastName, users.DOB, users.cell, users.email, users.password, users.isDeleted, roles.title as role from users full outer join roles on users.roleid = roles.id where isDeleted = False'
+	);
 	res.send(dbRes.rows);
 };
 
@@ -27,7 +29,15 @@ export const addUser = async function (req, res) {
 		return res.status(409);
 	}
 	bcrypt.hash(password, config.saltRounds, async function (err, hash) {
-		dbRes = await db.query('INSERT INTO public.users(firstname, lastname, dob, cell, email, "password", roleId) VALUES($1, $2, $3, $4, $5, $6, $7) returning *;', [firstname, lastname, dob, cell, email, hash, roleId]);
+		dbRes = await db.query('INSERT INTO public.users(firstname, lastname, dob, cell, email, "password", roleId) VALUES($1, $2, $3, $4, $5, $6, $7) returning *;', [
+			firstname,
+			lastname,
+			dob,
+			cell,
+			email,
+			hash,
+			roleId
+		]);
 		res.send(dbRes.rows[0]);
 	});
 };

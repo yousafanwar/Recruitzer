@@ -7,11 +7,11 @@ export const authenticate = function (req, res, next) {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
 	if (token == null) {
-		res.status(401).send('Token not provided');
+		return res.status(401).send('Token not provided');
 	}
 	jwt.verify(token, config.secret, function (error) {
 		if (error) {
-			res.status(401).send('Login Unsuccessful');
+			return res.status(401).send('Login Unsuccessful');
 		} else {
 			next();
 		}
@@ -38,7 +38,7 @@ export const login = async function (req, res) {
 					firstName: dbRes.rows[0].firstname,
 					lastName: dbRes.rows[0].lastname,
 					roleId: dbRes.rows[0].roleid
-				})
+				});
 			});
 		}
 	});

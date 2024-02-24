@@ -3,18 +3,18 @@
 @import 'material-icons/iconfont/material-icons.css';
 
 .login {
-	position: fixed;
-	inset: 0px;
-	width: 30rem;
-	height: fit-content;
-	max-width: 100vw;
-	max-height: 100dvh;
-	margin: auto;
+  position: fixed;
+  inset: 0px;
+  width: 30rem;
+  height: fit-content;
+  max-width: 100vw;
+  max-height: 100dvh;
+  margin: auto;
 }
 
 .btn-extended {
-	display: block;
-	width: 80%;
-	margin: auto;
-	margin-top: 20px;
+  display: block;
+  width: 80%;
+  margin: auto;
+  margin-top: 20px;
 }
