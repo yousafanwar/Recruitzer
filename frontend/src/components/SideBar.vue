@@ -10,33 +10,34 @@
         <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
       </div>
     </li>
+
+    <ul class="collapsible">
+      <li>
+        <a class="white-text waves-effect collapsible-header" v-if="isAdmin">
+          <i class="material-icons">supervisor_account</i>Admin</a>
+        <div class="waves-effect collapsible-body" v-on:click="getUsers()">
+          <i class="material-icons">whatshot</i>All users
+        </div>
+      </li>
+    </ul>
     <li>
-      <a href="/apps" class="white-text waves-effect" v-if="isAdmin"
-        ><i class="material-icons">supervisor_account</i>Admin</a
-      >
-    </li>
-    <li>
-      <a href="/entities" class="white-text waves-effect"
-        ><i class="material-icons">widgets</i>Two</a
-      >
+      <a href="/entities" class="white-text waves-effect">
+        <i class="material-icons">widgets</i>Two</a>
     </li>
     <li>
       <div class="divider"></div>
     </li>
     <li>
-      <a href="/settings" class="white-text waves-effect"
-        ><i class="material-icons">settings</i>Three</a
-      >
+      <a href="/settings" class="white-text waves-effect"><i class="material-icons">settings</i>Three</a>
     </li>
     <li>
-      <a href="#" class="white-text waves-effect"
-        ><i class="material-icons">exit_to_app</i>Logout</a
-      >
+      <a href="#" class="white-text waves-effect"><i class="material-icons">exit_to_app</i>Logout</a>
     </li>
   </ul>
 </template>
 
 <script>
+import * as utilities from '../utilities'
 import router from '@/router'
 import * as M from 'materialize-css/dist/js/materialize.min.js'
 
@@ -47,18 +48,24 @@ export default {
     }
   },
   mounted() {
+    this.checkAdmin()
     var elem = this.$refs.sidenav
     M.Sidenav.init(elem)
-    this.checkAdmin()
+    this.accordianFunc()
   },
   methods: {
     checkAdmin() {
-      let user = localStorage.getItem('loggedInUser')
-      if (!user) {
-        return router.push('/login')
-      }
-      const obj = JSON.parse(user)
-      this.isAdmin = obj.roleId == 1
+      const roleId = utilities.loginData.roleId == 1;
+      this.isAdmin = roleId;
+    },
+    accordianFunc() {
+      document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems);
+      });
+    },
+    getUsers() {
+      router.push('/users');
     }
   }
 }

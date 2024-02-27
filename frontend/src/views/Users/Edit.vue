@@ -34,11 +34,13 @@
 import NavBar from '@/components/NavBar.vue'
 import SideBar from '@/components/SideBar.vue'
 import router from '@/router'
+import * as utilities from '../../utilities.js'
+
 
 export default {
   data() {
     return {
-      token: '',
+      token: utilities.loginData.token,
       userData: []
     }
   },
@@ -46,32 +48,18 @@ export default {
     userId: String
   },
   mounted() {
-    this.getLoginData()
     this.fetchData()
     this.printToLog()
   },
   methods: {
     async fetchData() {
       try {
-        const response = await fetch(`http://localhost:3000/api/user/${this.userId}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`
-          }
-        })
-        if (!response.ok) {
-          console.log('Failed to get the all users data', this.token)
-        }
-        const result = await response.json()
-        console.log(result)
-        this.userData = result
-      } catch (error) {
-        console.log(error)
+        let result = await utilities.httpReqGET(`http://localhost:3000/api/user/${this.userId}`, this.token);
+        this.userData = result;
       }
-    },
-    getLoginData() {
-      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
-      this.token = loggedInUser.token
-      console.log('This is the user token', this.token)
+      catch (error) {
+        console.log('Error in fetchdata function of edit.vue', error);
+      }
     },
     printToLog() {
       console.log(this.userId)
@@ -81,24 +69,3 @@ export default {
 }
 </script>
 
-<style>
-/* #tableDiv{
-        max-width: 800px;
-        margin: 5px auto;
-    }
-    table{
-        width: 100%;
-        border-collapse: collapse;
-    }
-    td, th{
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-    th{
-        background-color: #f2f2f2;
-    }
-    tr:hover{
-        background-color: #f5f5f5; 
-    } */
-</style>
