@@ -12,14 +12,25 @@
     </li>
 
     <ul class="collapsible">
-      <li>
-        <a class="white-text waves-effect collapsible-header" v-if="isAdmin">
-          <i class="material-icons">supervisor_account</i>Admin</a>
-        <div class="waves-effect collapsible-body" v-on:click="getUsers()">
-          <i class="material-icons">whatshot</i>All users
-        </div>
+      <li v-if="isAdmin">
+        <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Admin<i class="material-icons">supervisor_account</i></a>
+            <div class="  collapsible-body">
+              <ul>
+                <li>
+                  <RouterLink class="sidenav-close" to="./users">Users</RouterLink>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </li>
       </li>
     </ul>
+
+
     <li>
       <a href="/entities" class="white-text waves-effect">
         <i class="material-icons">widgets</i>Two</a>
@@ -40,6 +51,7 @@
 import * as utilities from '../utilities'
 import router from '@/router'
 import * as M from 'materialize-css/dist/js/materialize.min.js'
+import { RouterLink } from 'vue-router'
 
 export default {
   data() {
@@ -55,7 +67,7 @@ export default {
   },
   methods: {
     checkAdmin() {
-      const roleId = utilities.loginData.roleId == 1;
+      const roleId = utilities.getLoginData().roleId == 1;
       this.isAdmin = roleId;
     },
     accordianFunc() {
@@ -63,10 +75,8 @@ export default {
         var elems = document.querySelectorAll('.collapsible');
         var instances = M.Collapsible.init(elems);
       });
-    },
-    getUsers() {
-      router.push('/users');
     }
+
   }
 }
 </script>

@@ -1,56 +1,65 @@
 import router from './router/index'
 
-// THE FOLLOWING FUNCTION WILL BE USED FOR "LOGIN" & "UPDATE" USERS FUNCTIONS
-export async function httpReqPOST(endPoint, ...args) {
+export async function fetchReq(reqType, endPoint, ...args) {
+
   let argsBody = {};
 
-  for (let i = 0; i < args.length; i += 2) {
-    argsBody[args[i]] = args[i + 1];
-  }
-  console.log(argsBody);
   try {
+    let headerContent = {};
+    let loginReq = false;
+    if (reqType === 'POST login') {
+      let splitReq = reqType.split(' ')[0];
+      reqType = splitReq
+      headerContent = { 'Content-Type': 'application/json' };
+      loginReq = true;
+    }
+    if (reqType === 'POST') {
+      headerContent = { 'Content-Type': 'application/json' }
+      for (let i = 0; i < args.length; i += 2) {
+        argsBody[args[i]] = args[i + 1];
+      }
+    }
+    if (reqType === 'GET' || reqType === 'UPDATE' || reqType === 'DELETE') {
+      headerContent = { Authorization: `Bearer ${args}` };
+    }
     const response = await fetch(`${endPoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(argsBody),
+      method: reqType,
+      headers: headerContent,
+      body: reqType === 'POST' ? JSON.stringify(argsBody) : null,
     })
+    errorHandle(response);
+    let result = await response.json();
+    if (loginReq) {
+      localStorage.setItem('loggedInUser', JSON.stringify(result))
+      console.log(result)
+      router.push('./')
+    }
+    if (reqType === 'GET' || reqType === 'UPDATE' || reqType === 'DELETE') {
+      return result;
+    }
+
+  }
+  catch (error) {
+    throw new Error(error);
+  }
+
+  function errorHandle(response, reqType) {
+
     if (!response.ok) {
-      throw new Error('Failed to login')
+      throw new Error(`Failed to execute ${reqType} request`);
     }
     if (response.status === 401) {
       router.push('./login')
     }
-    let result = await response.json();
-    localStorage.setItem('loggedInUser', JSON.stringify(result))
-    console.log(result)
-    router.push('./')
   }
-  catch (error) {
-    console.error('Error logging in:', error)
-  }
+
+
+
 }
 
-// THE FOLLOWING FUNCTION WILL BE USED FOR "GET ALL USERS" & "GET INDIVIDUAL USER"
-export async function httpReqGET(endPoint, token) {
-  try {
-    const response = await fetch(`${endPoint}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    if (!response.ok) {
-      console.log('Failed to get the all users data', token)
-    }
-    if (response.status === 401) {
-      router.push('/login')
-    }
-    const result = await response.json()
-    console.log(result)
-    return result
-  } catch (error) {
-    console.log(error)
-  }
-}
+
+
+
 
 export async function httpReqDEL(id, token) {
   try {
@@ -77,4 +86,3 @@ export function getLoginData() {
   return { firstName, lastName, email, roleId, token };
 }
 
-export const loginData = getLoginData();

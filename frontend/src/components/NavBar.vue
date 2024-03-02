@@ -1,7 +1,7 @@
 <template>
   <nav class="blue darken-2">
     <div class="nav-wrapper">
-      <a href="#!" class="brand-logo"><i class="material-icons">work</i>Recruitzi</a>
+    <RouterLink to='/'><a class="brand-logo"><i class="material-icons">work</i>Recruitzi</a></RouterLink>
       <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large right">
         <i class="material-icons">menu</i>
       </a>
@@ -22,3 +22,7 @@
     </div>
   </nav>
 </template>
+
+<script>
+  import { RouterLink } from 'vue-router';
+</script>

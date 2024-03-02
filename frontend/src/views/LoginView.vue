@@ -36,7 +36,7 @@ export default {
     async login(){
       
       try{
-        utilities.httpReqPOST('http://localhost:3000/api/login', 'email', this.email, 'password', this.password);
+        utilities.fetchReq('POST login', 'http://localhost:3000/api/login', 'email', this.email, 'password', this.password);
       }
       catch(error){
         console.log('Login function in loginview error', error);

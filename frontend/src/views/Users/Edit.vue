@@ -40,7 +40,7 @@ import * as utilities from '../../utilities.js'
 export default {
   data() {
     return {
-      token: utilities.loginData.token,
+      token: utilities.getLoginData().token,
       userData: []
     }
   },
@@ -54,7 +54,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        let result = await utilities.httpReqGET(`http://localhost:3000/api/user/${this.userId}`, this.token);
+        let result = await utilities.fetchReq('GET', `http://localhost:3000/api/user/${this.userId}`, this.token);
         this.userData = result;
       }
       catch (error) {

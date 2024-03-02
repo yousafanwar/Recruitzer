@@ -48,7 +48,7 @@ import * as utilities from '../../utilities.js'
 export default {
   data() {
     return {
-      token: utilities.loginData.token,
+      token: utilities.getLoginData().token,
       userData: [],
       userCount: '',
       userId: '' // This id is taken from the user variable defined in v-for
@@ -61,7 +61,7 @@ export default {
   methods: {
     async getAllUsers() {
       try {
-        let result = await utilities.httpReqGET('http://localhost:3000/api/user', this.token);
+        let result = await utilities.fetchReq('GET', 'http://localhost:3000/api/user', this.token);
         this.userData = result;
       } catch (error) {
         console.log('In utilities.httpReqGET getAllUsers func', error);
