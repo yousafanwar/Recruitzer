@@ -12,7 +12,7 @@ export const getUsers = async function (req, res) {
 
 // route handler to fetch individual user
 export const getUser = async function (req, res) {
-	let userId = req.params.id;
+	const userId = req.params.id;
 	const dbRes = await db.query('SELECT * from users where id = $1 and isDeleted = false', [userId]);
 	if (dbRes.rowCount > 0) {
 		res.send(dbRes.rows[0]);

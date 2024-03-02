@@ -4,7 +4,7 @@ import config from '../config.js';
 import bcrypt from 'bcrypt';
 
 export const authenticate = function (req, res, next) {
-	const authHeader = req.headers['authorization'];
+	const authHeader = req.headers.authorization;
 	const token = authHeader && authHeader.split(' ')[1];
 	if (token == null) {
 		return res.status(401).send('Token not provided');
@@ -31,9 +31,8 @@ export const login = async function (req, res) {
 			res.status(401).send('Invalid Password');
 		} else {
 			jwt.sign({ email }, config.secret, function (err, token) {
-				// res.json([token, dbRes.rows[0].roleid]);
 				res.json({
-					token: token,
+					token,
 					email: dbRes.rows[0].email,
 					firstName: dbRes.rows[0].firstname,
 					lastName: dbRes.rows[0].lastname,

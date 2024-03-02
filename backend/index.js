@@ -4,7 +4,7 @@ import userRoutes from './routes/user.js';
 import authRoutes from './routes/auth.js';
 import cors from 'cors';
 
-let app = express();
+const app = express();
 app.use(express.json());
 
 app.use(cors());
