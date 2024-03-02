@@ -11,69 +11,77 @@
 			</div>
 		</li>
 
-    <ul class="collapsible">
-      <li v-if="isAdmin">
-        <li class="no-padding">
-        <ul class="collapsible collapsible-accordion">
-          <li>
-            <a class="collapsible-header">Admin<i class="material-icons">supervisor_account</i></a>
-            <div class="  collapsible-body">
-              <ul>
-                <li>
-                  <RouterLink class="sidenav-close" to="./users">Users</RouterLink>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </li>
-      </li>
-    </ul>
-
-
-    <li>
-			<a href="/entities" class="white-text waves-effect"> <i class="material-icons">widgets</i>Two</a>
-		</li>
-		<li>
-			<div class="divider"></div>
-		</li>
-		<li>
-			<a href="/settings" class="white-text waves-effect"><i class="material-icons">settings</i>Three</a>
-		</li>
-		<li>
-			<a href="#" class="white-text waves-effect"><i class="material-icons">exit_to_app</i>Logout</a>
+		<li v-for="item in items" :key="item.id">
+			<ul ref="collapsible" class="collapsible collapsible-accordion">
+				<li>
+					<a class="collapsible-header white-text waves-effect">
+						{{ item.text }}<i class="material-icons">{{ item.icon }}</i>
+					</a>
+					<div class="collapsible-body" v-if="item.items && item.items.length > 0">
+						<ul class="blue darken-2">
+							<li v-for="nestedItem in item.items" :key="nestedItem.id">
+								<a v-bind:href="nestedItem.href" class="white-text waves-effect">
+									<i class="material-icons">{{ nestedItem.icon }}</i>
+									{{ nestedItem.text }}
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+			<div v-if="item.dividerAfter" class="divider"></div>
 		</li>
 	</ul>
 </template>
 
 <script>
 	import * as utilities from '../utilities';
-	import router from '@/router';
 	import * as M from 'materialize-css/dist/js/materialize.min.js';
-	import { RouterLink } from 'vue-router';
 
 	export default {
 		data() {
 			return {
-				isAdmin: false
+				isAdmin: false,
+				items: [
+					{
+						id: 1,
+						text: 'Admin',
+						href: '#',
+						icon: 'arrow_drop_down',
+						dividerAfter: false,
+						items: [{ id: 1, text: 'Users', href: './users', icon: 'apps', dividerAfter: false }]
+					},
+					{
+						id: 2,
+						text: 'Expandable',
+						href: '#',
+						icon: 'arrow_drop_down',
+						dividerAfter: true,
+						items: [
+							{ id: 1, text: 'Item 1', href: '#', icon: 'apps', dividerAfter: false },
+							{ id: 2, text: 'Item 2', href: '#', icon: 'apps', dividerAfter: false }
+						]
+					},
+					{ id: 3, text: 'Settings', href: '#', icon: 'settings', dividerAfter: false },
+					{ id: 4, text: 'Logout', href: '#', icon: 'exit_to_app', dividerAfter: false }
+				]
 			};
 		},
 		mounted() {
-			this.checkAdmin();
 			var elem = this.$refs.sidenav;
 			M.Sidenav.init(elem);
-			this.accordianFunc();
+
+			if (this.$refs.collapsible && this.$refs.collapsible.length > 0)
+				for (let loopIndex = 0; loopIndex < this.$refs.collapsible.length; loopIndex++) {
+					M.Collapsible.init(this.$refs.collapsible[loopIndex]);
+				}
+
+			this.checkAdmin();
 		},
 		methods: {
 			checkAdmin() {
 				const roleId = utilities.getLoginData().roleId == 1;
 				this.isAdmin = roleId;
-			},
-			accordianFunc() {
-				document.addEventListener('DOMContentLoaded', function () {
-					var elems = document.querySelectorAll('.collapsible');
-					var instances = M.Collapsible.init(elems);
-				});
 			}
 		}
 	};
