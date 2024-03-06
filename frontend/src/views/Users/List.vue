@@ -46,10 +46,10 @@
 	export default {
 		data() {
 			return {
-				token: utilities.getLoginData().token,
 				userData: [],
 				userCount: '',
-				userId: '' // This id is taken from the user variable defined in v-for
+				userId: '', // This id is taken from the user variable defined in v-for
+				token: { Authorization: `Bearer ${utilities.getLoginData().token}` }
 			};
 		},
 		mounted() {
@@ -59,7 +59,7 @@
 		methods: {
 			async getAllUsers() {
 				try {
-					let result = await utilities.fetchReq('GET', 'http://localhost:3000/api/user', this.token);
+					let result = await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token);
 					this.userData = result;
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
@@ -78,8 +78,14 @@
 			},
 
 			async deleteUser(user) {
+				try {
 				this.userId = user.id;
-				await utilities.httpReqDEL(this.userId, this.token);
+				let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'DELETE', null, this.token);
+				this.userData = result;
+		
+				} catch (error) {
+					console.log('In utilities.httpReqGET getAllUsers func', error);
+				}
 			}
 		},
 		components: { NavBar, SideBar }

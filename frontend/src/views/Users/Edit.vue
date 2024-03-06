@@ -38,7 +38,7 @@
 	export default {
 		data() {
 			return {
-				token: utilities.getLoginData().token,
+				token: { Authorization: `Bearer ${utilities.getLoginData().token}` },
 				userData: []
 			};
 		},
@@ -52,7 +52,7 @@
 		methods: {
 			async fetchData() {
 				try {
-					let result = await utilities.fetchReq('GET', `http://localhost:3000/api/user/${this.userId}`, this.token);
+					let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'GET', null, this.token);
 					this.userData = result;
 				} catch (error) {
 					console.log('Error in fetchdata function of edit.vue', error);
