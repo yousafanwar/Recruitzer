@@ -1,58 +1,54 @@
 <template>
 	<NavBar />
 	<SideBar />
-	<nav>
-		<div class="nav-wrapper blue darken-1">
-			<div class="col s12">
-				<RouterLink to="/users" class="breadcrumb">Users</RouterLink>
-				<a href="#" class="breadcrumb">{{ this.action }}</a>
-			</div>
-		</div>
-	</nav>
+
 	<div class="container">
 		<div class="row">
-			<form class="col s12" @submit.prevent="saveUser()">
-				<div class="row">
-					<div class="input-field col s6">
-						<input id="first_name" type="text" class="validate" v-model="userData.firstname" />
-						<label class="active" for="first_name">First Name</label>
+			<div class="col s12">
+				<div class="card">
+					<nav>
+						<div class="nav-wrapper blue lighten-1">
+							<div class="col s12">
+								<RouterLink to="/users" class="breadcrumb">Users</RouterLink>
+								<a href="#" class="breadcrumb">{{ this.action }}</a>
+							</div>
+						</div>
+					</nav>
+					<div class="card-content">
+						<span class="card-title">{{ this.action }} User</span>
+						<form>
+							<div class="row">
+								<div class="input-field col s12">
+									<input id="first_name" type="text" class="validate" v-model="userData.firstname" />
+									<label class="active" for="first_name">First Name</label>
+								</div>
+								<div class="input-field col s12">
+									<input id="last_name" type="text" class="validate" v-model="userData.lastname" />
+									<label class="active" for="last_name">Last Name</label>
+								</div>
+
+								<div class="input-field col s12">
+									<input type="tel" class="validate" v-model="userData.cell" />
+									<label class="active" for="cell">Contact Number</label>
+								</div>
+								<div class="input-field col s12">
+									<input ref="datepicker" id="dob" type="text" class="validate datepicker" v-model="userData.dob" />
+									<label class="active" for="dob">Date of Birth</label>
+								</div>
+
+								<div class="input-field col s12">
+									<input id="email" type="email" class="validate" v-model="userData.email" />
+									<label class="active" for="email">Email</label>
+								</div>
+							</div>
+						</form>
 					</div>
-					<div class="input-field col s6">
-						<input id="last_name" type="text" class="validate" v-model="userData.lastname" />
-						<label class="active" for="last_name">Last Name</label>
+					<div class="card-action">
+						<button class="btn green" v-on:click="this.saveUser()">Save</button>
+						<RouterLink to="/users" class="btn grey">Back</RouterLink>
 					</div>
 				</div>
-				<div class="row">
-					<div class="input-field col s6">
-						<input type="tel" class="validate" v-model="userData.cell" />
-						<label class="active" for="cell">Contact Number</label>
-					</div>
-					<div class="input-field col s6">
-						<input ref="datepicker" id="dob" type="text" class="validate datepicker" v-model="userData.dob" />
-						<label class="active" for="dob">Date of Birth</label>
-					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12">
-						<input id="email" type="email" class="validate" v-model="userData.email" />
-						<label class="active" for="email">Email</label>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col s6">
-						<button style="width: 100%" type="submit" value="Update User" class="btn waves-effect waves-light blue darken-2">
-							Save
-							<i class="material-icons right">save</i>
-						</button>
-					</div>
-					<div class="col s6">
-						<RouterLink to="/users" style="width: 100%" class="btn waves-effect waves-light red darken-2">
-							Back
-							<i class="material-icons right">arrow_back</i>
-						</RouterLink>
-					</div>
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 </template>
