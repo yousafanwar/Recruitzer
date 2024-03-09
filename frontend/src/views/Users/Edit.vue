@@ -1,64 +1,59 @@
 <template>
 	<NavBar />
 	<SideBar />
+	<nav>
+		<div class="nav-wrapper blue darken-1">
+			<div class="col s12">
+				<RouterLink to="/users" class="breadcrumb">Users</RouterLink>
+				<a href="#" class="breadcrumb">{{ this.action }}</a>
+			</div>
+		</div>
+	</nav>
 	<div class="container">
-		<table class="highlight centered responsive-table">
-			<thead>
-				<tr>
-					<th>First Name / Surname</th>
-					<th>Email Address</th>
-					<th>Date of Birth</th>
-					<th>Contact Number</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>{{ userData.firstname + userData.lastname }}</td>
-					<td>{{ userData.email }}</td>
-					<td>{{ userData.dob }}</td>
-					<td>{{ userData.cell }}</td>
-			
-				</tr>
-			</tbody>
-		</table>
-
 		<div class="row">
-    <form class="col s12" @submit.prevent="updateUser()">
-      <div class="row">
-        <div class="input-field col s6">
-          <input id="first_name" type="text" class="validate" v-model="updateInfo.firstname">
-          <label for="first_name">First Name</label>
-        </div>
-        <div class="input-field col s6">
-          <input id="last_name" type="text" class="validate" v-model="updateInfo.lastname">
-          <label for="last_name">Last Name</label>
-        </div>
-      </div>
-      <div class="row">
-		  <div class="input-field col s6">
-          <input type="tel" class="validate" v-model="updateInfo.cell">
-          <label for="cell">Contact Number</label>
-        </div>
-		  <div class="input-field col s6">
-		  <input id="dob" type="text" class="validate datepicker" v-model="updateInfo.dob">
-          <label for="dob">Date of Birth</label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s12">
-          <input id="email" type="email" class="validate" v-model="updateInfo.email">
-          <label for="email">Email</label>
-        </div>
-      </div>
-	  <div class="row">
-        <div class="input-field col s12">
-          <input id="password" type="password" class="validate" v-model="updateInfo.password">
-          <label for="password">Password</label>
-        </div>
-		<input type="submit" value="Update User" class="btn btn-large btn-extended grey lighten-4 black-text" />
-      </div>
-    </form>
-  </div>
+			<form class="col s12" @submit.prevent="saveUser()">
+				<div class="row">
+					<div class="input-field col s6">
+						<input id="first_name" type="text" class="validate" v-model="userData.firstname" />
+						<label class="active" for="first_name">First Name</label>
+					</div>
+					<div class="input-field col s6">
+						<input id="last_name" type="text" class="validate" v-model="userData.lastname" />
+						<label class="active" for="last_name">Last Name</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s6">
+						<input type="tel" class="validate" v-model="userData.cell" />
+						<label class="active" for="cell">Contact Number</label>
+					</div>
+					<div class="input-field col s6">
+						<input ref="datepicker" id="dob" type="text" class="validate datepicker" v-model="userData.dob" />
+						<label class="active" for="dob">Date of Birth</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="email" type="email" class="validate" v-model="userData.email" />
+						<label class="active" for="email">Email</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s6">
+						<button style="width: 100%" type="submit" value="Update User" class="btn waves-effect waves-light blue darken-2">
+							Save
+							<i class="material-icons right">save</i>
+						</button>
+					</div>
+					<div class="col s6">
+						<RouterLink to="/users" style="width: 100%" class="btn waves-effect waves-light red darken-2">
+							Back
+							<i class="material-icons right">arrow_back</i>
+						</RouterLink>
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 </template>
 
@@ -66,21 +61,22 @@
 	import NavBar from '@/components/NavBar.vue';
 	import SideBar from '@/components/SideBar.vue';
 	import * as utilities from '../../utilities.js';
+	import router from '../../router/index';
 
 	export default {
 		data() {
 			return {
 				token: { Authorization: `Bearer ${utilities.getLoginData().token}` },
-				userData: [],
-				updateInfo: {firstname: '', 
-							lastname: '', 
-							dob: '', 
-							cell: '', 
-							email: '', 
-							password: '',
-							id: this.userId
-						}
-			}
+				userData: {
+					id: 0,
+					firstname: '',
+					lastname: '',
+					cell: '',
+					dob: '',
+					email: ''
+				},
+				action: ''
+			};
 		},
 		props: {
 			userId: String
@@ -91,40 +87,48 @@
 		},
 		methods: {
 			async fetchData() {
-				try {
-					let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'GET', null, this.token);
-					this.userData = await result.json();
-				} catch (error) {
-					console.log('Error in fetchdata function of edit.vue', error);
+				if (this.$route?.params?.userId !== '0') {
+					this.action = 'Edit';
+					try {
+						let result = await (await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'GET', null, this.token)).json();
+
+						this.userData = { ...result };
+					} catch (error) {
+						console.log('Error in fetchdata function of edit.vue', error);
+					}
+				} else {
+					this.action = 'Create';
+					// Form opened to create a new user so we don't do a fetch here.
 				}
 			},
-			datePicker(){
-				document.addEventListener('DOMContentLoaded', () => {
-        const options = {
-            yearRange: 10,
-			format: 'mm-dd-yyyy',
-			onClose: () => {
-				const dateString = new Date(document.querySelectorAll('.datepicker').value).toString();
+			datePicker() {
+				const options = {
+					yearRange: 100,
+					format: 'mm-dd-yyyy'
+				};
 
-				console.log(dateString);
-				// this.updateInfo.dob = document.querySelectorAll('.datepicker').value;
-			}
-        };
-        let elems = document.querySelectorAll('.datepicker');
-        let instances = M.Datepicker.init(elems, options);
-    });
+				let el = this.$refs.datepicker;
+				M.Datepicker.init(el, options);
 			},
-			prinToConsole(){
-				console.log(this.updateInfo);
-			},
-			async updateUser(){
-				try {
-					await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.updateInfo, this.token);
-					
-				} catch (error) {
-					console.log('Error in fetchdata function of edit.vue', error);
+			async saveUser() {
+				if (this.$route?.params?.userId === '0') {
+					//creating
+					try {
+						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'POST', this.userData, this.token);
+						let jsonResult = await result.json();
+						router.push('/user/' + jsonResult.id);
+					} catch (error) {
+						console.log('Error in fetchdata function of edit.vue', error);
+					}
+				} else {
+					//updating existing
+					try {
+						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.userData, this.token);
+						console.log(result);
+					} catch (error) {
+						console.log('Error in fetchdata function of edit.vue', error);
+					}
 				}
-
 			}
 		},
 		components: { NavBar, SideBar }

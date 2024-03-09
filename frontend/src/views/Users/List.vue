@@ -1,6 +1,14 @@
 <template>
 	<NavBar />
 	<SideBar />
+	<nav>
+		<div class="nav-wrapper blue darken-1">
+			<div class="col s12">
+				<a href="#" class="breadcrumb">Users</a>
+			</div>
+		</div>
+	</nav>
+
 	<div class="container">
 		<h3>Users</h3>
 		<table class="striped responsive-table">
@@ -14,14 +22,15 @@
 			</thead>
 			<tbody>
 				<tr v-for="user in userData" :key="user.id">
-					<td>{{ user.firstname + ' ' + user.lastname }}</td>
-					<td>{{ user.email }}</td>
-					<td>{{ user.title }}</td>
 					<td>
-						<i class="material-icons modal-trigger" data-target="modal1" v-on:click="this.userIdToDelete = user.id"> close </i>
-						<i class="material-icons" v-on:click="redirctToInd(user)">remove_red_eye</i>
-						<i class="material-icons">edit</i>
-						<i class="material-icons">settings</i>
+						<RouterLink :to="`./user/${user.id}`"> {{ user.firstname + ' ' + user.lastname }}</RouterLink>
+					</td>
+					<td>
+						<RouterLink :to="`./user/${user.id}`"> {{ user.email }}</RouterLink>
+					</td>
+					<td>{{ user.role }}</td>
+					<td>
+						<a href="#"> <i class="material-icons modal-trigger" data-target="modal1" v-on:click="this.userIdToDelete = user.id"> delete </i></a>
 					</td>
 				</tr>
 			</tbody>
@@ -40,7 +49,7 @@
 <script>
 	import NavBar from '@/components/NavBar.vue';
 	import SideBar from '@/components/SideBar.vue';
-	import router from '@/router';
+
 	import * as utilities from '../../utilities.js';
 
 	export default {
@@ -60,21 +69,16 @@
 		methods: {
 			async getAllUsers() {
 				try {
-					let result = await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token);
-					this.userData = await result.json();
+					let result = await (await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token)).json();
+					this.userData = { ...result };
 				} catch (error) {
-					console.log('In utilities.httpReqGET getAllUsers func', error);
+					console.log('Error in /api/user GET: ', error);
 				}
-			},
-			redirctToInd(user) {
-				this.userId = user.id;
-				console.log(this.userId);
-				router.push({ name: 'user', params: { userId: this.userId } });
 			},
 			openModelFunc() {
 				document.addEventListener('DOMContentLoaded', function () {
 					var elems = document.querySelectorAll('.modal');
-					var instances = M.Modal.init(elems);
+					M.Modal.init(elems);
 				});
 			},
 
@@ -84,18 +88,16 @@
 				}
 				const uId = this.userIdToDelete;
 				let index = this.userData.findIndex(function (u) {
-					return u.id !== uId;
+					return u.id === uId;
 				});
-				console.log(index);
+
 				try {
-					console.log(this.userIdToDelete);
-					let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
+					await utilities.apiCall(`http://localhost:3000/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
 				}
 
 				this.userData.splice(index, 1);
-				console.log(this.userData);
 			}
 		},
 		components: { NavBar, SideBar }
