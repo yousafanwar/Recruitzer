@@ -40,7 +40,7 @@
           <label for="cell">Contact Number</label>
         </div>
 		  <div class="input-field col s6">
-		  <input type="text" class="datepicker" v-model="updateInfo.dob">
+		  <input id="dob" type="text" class="validate datepicker" v-model="updateInfo.dob">
           <label for="dob">Date of Birth</label>
         </div>
       </div>
@@ -93,15 +93,22 @@
 			async fetchData() {
 				try {
 					let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'GET', null, this.token);
-					this.userData = result;
+					this.userData = await result.json();
 				} catch (error) {
 					console.log('Error in fetchdata function of edit.vue', error);
 				}
 			},
 			datePicker(){
-				document.addEventListener('DOMContentLoaded', function() {
+				document.addEventListener('DOMContentLoaded', () => {
         const options = {
-            yearRange: 10
+            yearRange: 10,
+			format: 'mm-dd-yyyy',
+			onClose: () => {
+				const dateString = new Date(document.querySelectorAll('.datepicker').value).toString();
+
+				console.log(dateString);
+				// this.updateInfo.dob = document.querySelectorAll('.datepicker').value;
+			}
         };
         let elems = document.querySelectorAll('.datepicker');
         let instances = M.Datepicker.init(elems, options);

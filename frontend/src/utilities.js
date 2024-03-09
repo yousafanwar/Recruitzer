@@ -20,7 +20,7 @@ export const apiCall = async (url, method, data = null, customHeaders = {}) => {
 			throw new Error(`Error fetching data from ${url}: ${response.statusText}`);
 		}
 
-		return await response.json();
+		return await response;
 	} catch (error) {
 		throw new Error(`Error fetching data from ${url}. Error: ${error}`);
 	}

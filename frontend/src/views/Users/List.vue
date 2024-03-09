@@ -18,7 +18,7 @@
 					<td>{{ user.email }}</td>
 					<td>{{ user.title }}</td>
 					<td>
-						<i class="material-icons modal-trigger" data-target="modal1" v-on:click="deleteUser(user)"> close </i>
+						<i class="material-icons modal-trigger" data-target="modal1" v-on:click="this.userIdToDelete = user.id"> close </i>
 						<i class="material-icons" v-on:click="redirctToInd(user)">remove_red_eye</i>
 						<i class="material-icons">edit</i>
 						<i class="material-icons">settings</i>
@@ -32,7 +32,7 @@
 			<p>Are you sure you want to delete this user?</p>
 		</div>
 		<div class="modal-footer">
-			<a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+			<button class="modal-close waves-effect waves-green btn-flat" v-on:click="deleteUser()">Agree</button>
 		</div>
 	</div>
 </template>
@@ -49,7 +49,8 @@
 				userData: [],
 				userCount: '',
 				userId: '', // This id is taken from the user variable defined in v-for
-				token: { Authorization: `Bearer ${utilities.getLoginData().token}` }
+				token: { Authorization: `Bearer ${utilities.getLoginData().token}` },
+				userIdToDelete: null
 			};
 		},
 		mounted() {
@@ -60,7 +61,7 @@
 			async getAllUsers() {
 				try {
 					let result = await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token);
-					this.userData = result;
+					this.userData = await result.json();
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
 				}
@@ -77,15 +78,24 @@
 				});
 			},
 
-			async deleteUser(user) {
+			async deleteUser() {
+				if (!this.userIdToDelete) {
+					return;
+				}
+				const uId = this.userIdToDelete;
+				let index = this.userData.findIndex(function (u) {
+					return u.id !== uId;
+				});
+				console.log(index);
 				try {
-				this.userId = user.id;
-				let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'DELETE', null, this.token);
-				this.userData = result;
-		
+					console.log(this.userIdToDelete);
+					let result = await utilities.apiCall(`http://localhost:3000/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
 				}
+
+				this.userData.splice(index, 1);
+				console.log(this.userData);
 			}
 		},
 		components: { NavBar, SideBar }

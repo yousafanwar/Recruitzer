@@ -19,7 +19,7 @@
 
 <script>
 	import router from '@/router';
-import * as utilities from '../utilities';
+	import * as utilities from '../utilities';
 
 	export default {
 		data() {
@@ -34,7 +34,7 @@ import * as utilities from '../utilities';
 				try {
 					const result = await utilities.apiCall('http://localhost:3000/api/login', 'POST', { email: this.email, password: this.password });
 					this.userData = result;
-					if(result){
+					if (result) {
 						localStorage.setItem('loggedInUser', JSON.stringify(result));
 						router.push('/');
 					}
