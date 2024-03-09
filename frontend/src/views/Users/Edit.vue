@@ -116,6 +116,7 @@
 					try {
 						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'POST', this.userData, this.token);
 						let jsonResult = await result.json();
+						alert('User created successfully');
 						router.push('/user/' + jsonResult.id);
 					} catch (error) {
 						console.log('Error in fetchdata function of edit.vue', error);
@@ -124,7 +125,7 @@
 					//updating existing
 					try {
 						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.userData, this.token);
-						console.log(result);
+						alert('User saved successfully');
 					} catch (error) {
 						console.log('Error in fetchdata function of edit.vue', error);
 					}

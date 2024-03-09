@@ -45,7 +45,7 @@ export const addUser = async function (req, res) {
 export const updateUser = async function (req, res) {
 	const { firstname, lastname, dob, cell, email, id } = req.body;
 
-	await db.query('UPDATE public.users SET firstname=$1, lastname=$2, dob=$3, cell=$4, email=$5 WHERE id=$7', [firstname, lastname, dob, cell, email, id]);
+	await db.query('UPDATE public.users SET firstname=$1, lastname=$2, dob=$3, cell=$4, email=$5 WHERE id=$6', [firstname, lastname, dob, cell, email, id]);
 	res.sendStatus(200);
 };
 
