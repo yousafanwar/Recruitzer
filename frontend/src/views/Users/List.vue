@@ -70,7 +70,7 @@
 			async getAllUsers() {
 				try {
 					let result = await (await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token)).json();
-					this.userData = { ...result };
+					this.userData = [...result];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
