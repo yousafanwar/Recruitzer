@@ -74,19 +74,17 @@
 				action: ''
 			};
 		},
-		props: {
-			userId: String
-		},
 		mounted() {
 			this.fetchData();
-			this.datePicker();
+			this.setDatePicker();
 		},
 		methods: {
 			async fetchData() {
-				if (this.$route?.params?.userId !== '0') {
+				const userId = this.$route?.params?.userId;
+				if (userId !== '0') {
 					this.action = 'Edit';
 					try {
-						let result = await (await utilities.apiCall(`http://localhost:3000/api/user/${this.userId}`, 'GET', null, this.token)).json();
+						let result = await (await utilities.apiCall(`http://localhost:3000/api/user/${userId}`, 'GET', null, this.token)).json();
 
 						this.userData = { ...result };
 					} catch (error) {
@@ -97,7 +95,7 @@
 					// Form opened to create a new user so we don't do a fetch here.
 				}
 			},
-			datePicker() {
+			setDatePicker() {
 				const options = {
 					yearRange: 100,
 					format: 'mm-dd-yyyy'
@@ -107,7 +105,8 @@
 				M.Datepicker.init(el, options);
 			},
 			async saveUser() {
-				if (this.$route?.params?.userId === '0') {
+				const userId = this.$route?.params?.userId;
+				if (userId === '0') {
 					//creating
 					try {
 						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'POST', this.userData, this.token);
@@ -120,7 +119,7 @@
 				} else {
 					//updating existing
 					try {
-						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.userData, this.token);
+						await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.userData, this.token);
 						alert('User saved successfully');
 					} catch (error) {
 						console.log('Error in fetchdata function of edit.vue', error);

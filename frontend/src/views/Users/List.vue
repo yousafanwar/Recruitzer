@@ -114,8 +114,8 @@
 			};
 		},
 		mounted() {
-			this.getAllUsers();
 			this.openModelFunc();
+			this.getAllUsers();
 		},
 		methods: {
 			async getAllUsers() {
@@ -127,10 +127,8 @@
 				}
 			},
 			openModelFunc() {
-				document.addEventListener('DOMContentLoaded', function () {
-					var elems = document.querySelectorAll('.modal');
-					M.Modal.init(elems);
-				});
+				const elem = this.$refs.deleteUserModel;
+				M.Modal.init(elem);
 			},
 
 			async deleteUser() {
