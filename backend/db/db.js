@@ -11,6 +11,10 @@ const pool = new Pool({
 });
 
 export const query = async function (sql, params) {
+	if(config.enableDbLogging){
+		console.log('Executing query: ');
+		console.log(sql);
+	}
 	const startTime = Date.now();
 	const result = await pool.query(sql, params);
 	const duration = Date.now() - startTime;
