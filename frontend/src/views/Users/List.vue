@@ -100,7 +100,7 @@
 <script>
 	import NavBar from '@/components/NavBar.vue';
 	import SideBar from '@/components/SideBar.vue';
-
+	import config from '../../../config.js';
 	import * as utilities from '../../utilities.js';
 
 	export default {
@@ -120,7 +120,7 @@
 		methods: {
 			async getAllUsers() {
 				try {
-					let result = await (await utilities.apiCall('http://localhost:3000/api/user', 'GET', null, this.token)).json();
+					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user`, 'GET', null, this.token)).json();
 					this.userData = [...result];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
@@ -141,7 +141,8 @@
 				});
 
 				try {
-					await utilities.apiCall(`http://localhost:3000/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
+					http://localhost:3000/api/user/${this.userIdToDelete}
+					await utilities.apiCall(`${config.host}${config.port}/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
 				}

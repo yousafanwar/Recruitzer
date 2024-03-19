@@ -20,26 +20,26 @@
 <script>
 	import router from '@/router';
 	import * as utilities from '../utilities';
+	import config from '../../config';
 
 	export default {
 		data() {
 			return {
 				email: '',
 				password: '',
-				userData: ''
 			};
 		},
 		methods: {
 			async login() {
 				try {
-					const result = await utilities.apiCall('http://localhost:3000/api/login', 'POST', { email: this.email, password: this.password });
-					this.userData = result;
-					if (result) {
+					const response = await utilities.apiCall(`${config.host+config.port}/api/login`, 'POST', { email: this.email, password: this.password });
+
+					let result = await response.json();
+
+					if (response) {
 						localStorage.setItem('loggedInUser', JSON.stringify(result));
 						router.push('/');
 					}
-
-					console.log('Save it in local storage', this.userData);
 				} catch (error) {
 					console.log('Login function in loginview error', error);
 				}

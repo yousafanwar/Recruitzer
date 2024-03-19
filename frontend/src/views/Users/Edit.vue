@@ -58,6 +58,7 @@
 	import SideBar from '@/components/SideBar.vue';
 	import * as utilities from '../../utilities.js';
 	import router from '../../router/index';
+	import config from '../../../config.js';
 
 	export default {
 		data() {
@@ -84,8 +85,7 @@
 				if (userId !== '0') {
 					this.action = 'Edit';
 					try {
-						let result = await (await utilities.apiCall(`http://localhost:3000/api/user/${userId}`, 'GET', null, this.token)).json();
-
+						let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user/${userId}`, 'GET', null, this.token)).json();
 						this.userData = { ...result };
 					} catch (error) {
 						console.log('Error in fetchdata function of edit.vue', error);
@@ -109,7 +109,7 @@
 				if (userId === '0') {
 					//creating
 					try {
-						let result = await utilities.apiCall(`http://localhost:3000/api/user`, 'POST', this.userData, this.token);
+						let result = await utilities.apiCall(`${config.host}${config.port}/api/user`, 'POST', this.userData, this.token);
 						let jsonResult = await result.json();
 						alert('User created successfully');
 						router.push('/user/' + jsonResult.id);
@@ -119,7 +119,7 @@
 				} else {
 					//updating existing
 					try {
-						await utilities.apiCall(`http://localhost:3000/api/user`, 'PUT', this.userData, this.token);
+						await utilities.apiCall(`${config.host}${config.port}/api/user`, 'PUT', this.userData, this.token);
 						alert('User saved successfully');
 					} catch (error) {
 						console.log('Error in fetchdata function of edit.vue', error);
