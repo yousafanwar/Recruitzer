@@ -36,10 +36,8 @@
 
 					let result = await response.json();
 
-					if (response) {
 						localStorage.setItem('loggedInUser', JSON.stringify(result));
 						router.push('/');
-					}
 				} catch (error) {
 					console.log('Login function in loginview error', error);
 				}
