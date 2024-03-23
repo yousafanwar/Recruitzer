@@ -12,6 +12,15 @@
 							</div>
 						</div>
 					</nav>
+
+					<div class="row" id="searchInputContainer">
+						<div class="input-field col s6">
+							<input value="" id="searchInput" type="text" class="validate" v-model="searchIn">
+							<label for="Search">Search</label>
+							<a class="waves-effect waves-light btn" style="background-color: deepskyblue;" v-on:click="filterQuery()">Search</a>
+						</div>
+						
+					</div>
 					<div class="card-content">
 						<span class="card-title">Users</span>
 						<table class="striped responsive-table">
@@ -115,7 +124,8 @@
 				page: 1,
 				pageCount: 10,
 				orderByCol: 'firstname',
-				listIndex: 1
+				listIndex: 1,
+				searchIn: ''
 			};
 		},
 		mounted() {
@@ -126,7 +136,7 @@
 			async getAllUsers() {
 				try {
 					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user`, 'GET', null, this.token)).json();
-					this.userData = [...result];
+					this.userData = [...result.records];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
@@ -170,10 +180,22 @@
 					let result = await (
 						await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}`, 'GET', null, this.token)
 					).json();
-					this.userData = [...result];
+					this.userData = [...result.records];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
+			},
+			async filterQuery(){
+				console.log(this.searchIn);
+				try {
+					let result = await (
+						await utilities.apiCall(`${config.host}${config.port}/api/user?searchText=${this.searchIn}`, 'GET', null, this.token)
+					).json();
+					this.userData = [...result.records];
+				} catch (error) {
+					console.log('Error in /api/user GET: ', error);
+				}
+	
 			}
 		},
 		components: { NavBar, SideBar }
@@ -192,5 +214,10 @@
 	i:hover {
 		color: gray;
 	}
+	#searchInputContainer{
+		border: 2mm solid deepskyblue;
+		border-radius: 2mm;
+		max-width: 100%;
+		margin: 5mm;
+	}
 </style>
-../../config.js
