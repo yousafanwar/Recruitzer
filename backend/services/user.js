@@ -5,33 +5,46 @@ import * as db from '../db/db.js';
 export const getUsers = async function (req, res) {
 	console.log(req.query);
 	let order = '';
-	let {searchText, page, pageCount, orderByCol, orderDir} = req.query;
-	let whereClause = ' where isDeleted = False ';
-	if(searchText !== undefined && searchText !== ''){
+	let { searchText, page, pageCount, orderByCol, orderDir } = req.query;
+	let whereClause = ' where isDeleted = false ';
+	if (searchText !== undefined && searchText !== '') {
 		whereClause += `AND (firstName like '%${searchText}%' OR lastName like '%${searchText}%' OR email like '%${searchText}%' OR cell like '%${searchText}%')`;
 	}
-	if(!page){
+	if (!page) {
 		page = 1;
 	}
-	if(!pageCount){
+	if (!pageCount) {
 		pageCount = 10;
 	}
-	if(!orderDir){
+	if (!orderDir) {
 		order = ' asc ';
-	}else{
-		order = ' desc '
+	} else {
+		order = ' desc ';
 	}
 	let orderBy = ' order by ';
-	if(!orderByCol || orderByCol === ''){
+	if (!orderByCol || orderByCol === '') {
 		orderBy += 'users.id';
-	}else{
+	} else {
 		orderBy += 'users.' + orderByCol;
 	}
-	let offSet = ` offset ${(page-1)*pageCount} limit ${pageCount} `;
-	const dbRes = await db.query(
-		'select row_number () over (order by users.id) as rowNum, users.id, users.firstName, users.lastName, users.DOB, users.cell, users.email, users.password, users.isDeleted, roles.title as role from users full outer join roles on users.roleid = roles.id ' + whereClause + orderBy + order + offSet
+	const offSet = ` offset ${(page - 1) * pageCount} limit ${pageCount} `;
+
+	let dbRes = await db.query('select count(users.id) as TotalRecords from public.users ' + whereClause);
+	const totalRecords = dbRes.rows[0].TotalRecords;
+
+	dbRes = await db.query(
+		'select users.id, users.firstName, users.lastName, users.DOB, users.cell, users.email, users.password, users.isDeleted, roles.title as role from public.users full outer join roles on users.roleid = roles.id ' +
+			whereClause +
+			orderBy +
+			order +
+			offSet
 	);
-	res.send(dbRes.rows);
+	res.send({
+		page: page,
+		pageCount: pageCount,
+		totalRecords: totalRecords,
+		records: dbRes.rows
+	});
 };
 
 // route handler to fetch individual user
