@@ -20,24 +20,24 @@
 <script>
 	import router from '@/router';
 	import * as utilities from '../utilities';
-	import config from '../../config';
+	import config from '@/config';
 
 	export default {
 		data() {
 			return {
 				email: '',
-				password: '',
+				password: ''
 			};
 		},
 		methods: {
 			async login() {
 				try {
-					const response = await utilities.apiCall(`${config.host+config.port}/api/login`, 'POST', { email: this.email, password: this.password });
+					const response = await utilities.apiCall(`${config.host + config.port}/api/login`, 'POST', { email: this.email, password: this.password });
 
 					let result = await response.json();
 
-						localStorage.setItem('loggedInUser', JSON.stringify(result));
-						router.push('/');
+					localStorage.setItem('loggedInUser', JSON.stringify(result));
+					router.push('/');
 				} catch (error) {
 					console.log('Login function in loginview error', error);
 				}
@@ -45,3 +45,4 @@
 		}
 	};
 </script>
+../config

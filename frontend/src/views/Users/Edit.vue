@@ -58,7 +58,7 @@
 	import SideBar from '@/components/SideBar.vue';
 	import * as utilities from '../../utilities.js';
 	import router from '../../router/index';
-	import config from '../../../config.js';
+	import config from '@/config.js';
 
 	export default {
 		data() {
@@ -130,3 +130,4 @@
 		components: { NavBar, SideBar }
 	};
 </script>
+../../config.js

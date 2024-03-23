@@ -46,27 +46,29 @@
 					</div>
 					<div class="card-action">
 						<ul class="pagination">
-							<li class="disabled">
+							<li :class="[listIndex === 1 ? 'disabled' : '']" v-on:click="pageSelector('moveLeft')">
 								<a href="#!" class="blue-text">
-									<i class="material-icons">chevron_left</i>
+									<i class="material-icons" v-on:click="pageSelector('left')">chevron_left</i>
 								</a>
 							</li>
-							<li class="active blue lighten-1">
-								<a href="#!" class="white-text">1</a>
+
+							<li :class="[listIndex === 1 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(1)">
+								<a href="#!" :class="[listIndex === 1 ? 'white-text' : 'blue-text']">1</a>
 							</li>
-							<li class="waves-effect">
-								<a href="#!" class="blue-text">2</a>
+							<li :class="[listIndex === 2 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(2)">
+								<a href="#!" :class="[listIndex === 2 ? 'white-text' : 'blue-text']">2</a>
 							</li>
-							<li class="waves-effect">
-								<a href="#!" class="blue-text">3</a>
+
+							<li :class="[listIndex === 3 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(3)">
+								<a href="#!" :class="[listIndex === 3 ? 'white-text' : 'blue-text']">3</a>
 							</li>
-							<li class="waves-effect">
-								<a href="#!" class="blue-text">4</a>
+							<li :class="[listIndex === 4 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(4)">
+								<a href="#!" :class="[listIndex === 4 ? 'white-text' : 'blue-text']">4</a>
 							</li>
-							<li class="waves-effect">
-								<a href="#!" class="blue-text">5</a>
+							<li :class="[listIndex === 4 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(5)">
+								<a href="#!" :class="[listIndex === 5 ? 'white-text' : 'blue-text']">5</a>
 							</li>
-							<li class="waves-effect">
+							<li class="waves-effect" v-on:click="pageSelector('moveRight')">
 								<a href="#!" class="blue-text">
 									<i class="material-icons">chevron_right</i>
 								</a>
@@ -100,7 +102,7 @@
 <script>
 	import NavBar from '@/components/NavBar.vue';
 	import SideBar from '@/components/SideBar.vue';
-	import config from '../../../config.js';
+	import config from '@/config.js';
 	import * as utilities from '../../utilities.js';
 
 	export default {
@@ -108,9 +110,12 @@
 			return {
 				userData: [],
 				userCount: '',
-				userId: '', // This id is taken from the user variable defined in v-for
 				token: { Authorization: `Bearer ${utilities.getLoginData().token}` },
-				userIdToDelete: null
+				userIdToDelete: null,
+				page: 1,
+				pageCount: 10,
+				orderByCol: 'firstname',
+				listIndex: 1
 			};
 		},
 		mounted() {
@@ -141,13 +146,34 @@
 				});
 
 				try {
-					http://localhost:3000/api/user/${this.userIdToDelete}
 					await utilities.apiCall(`${config.host}${config.port}/api/user/${this.userIdToDelete}`, 'DELETE', null, this.token);
 				} catch (error) {
 					console.log('In utilities.httpReqGET getAllUsers func', error);
 				}
 
 				this.userData.splice(index, 1);
+			},
+			async pageSelector(arg) {
+				this.listIndex = arg;
+				if (typeof arg === 'number') {
+					this.page = arg;
+				}
+				if (arg === 'moveLeft') {
+					this.page -= 1;
+					this.listIndex = this.page;
+				}
+				if (arg === 'moveRight') {
+					this.page += 1;
+					this.listIndex = this.page;
+				}
+				try {
+					let result = await (
+						await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}`, 'GET', null, this.token)
+					).json();
+					this.userData = [...result];
+				} catch (error) {
+					console.log('Error in /api/user GET: ', error);
+				}
 			}
 		},
 		components: { NavBar, SideBar }
@@ -167,3 +193,4 @@
 		color: gray;
 	}
 </style>
+../../config.js
