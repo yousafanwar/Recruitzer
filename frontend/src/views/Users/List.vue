@@ -15,11 +15,10 @@
 
 					<div class="row" id="searchInputContainer">
 						<div class="input-field col s6">
-							<input value="" id="searchInput" type="text" class="validate" v-model="searchIn">
+							<input value="" id="searchInput" type="text" class="validate" v-model="searchIn" />
 							<label for="Search">Search</label>
-							<a class="waves-effect waves-light btn" style="background-color: deepskyblue;" v-on:click="filterQuery()">Search</a>
+							<a class="waves-effect waves-light btn" style="background-color: deepskyblue" v-on:click="filterQuery()">Search</a>
 						</div>
-						
 					</div>
 					<div class="card-content">
 						<span class="card-title">Users</span>
@@ -82,6 +81,21 @@
 									<i class="material-icons">chevron_right</i>
 								</a>
 							</li>
+							<!-- Dropdown Trigger -->
+							<li>
+								<a class="dropdown-trigger btn" data-target="dropdown1" style="background-color: deepskyblue">{{ pageCount }}</a>
+								<span>Items per page</span>
+
+								<!-- Dropdown Structure -->
+								<ul id="dropdown1" class="dropdown-content">
+									<li class="ppgItem" v-on:click="itemPageCount(10)">10</li>
+									<li class="ppgItem" v-on:click="itemPageCount(15)">15</li>
+									<li class="ppgItem" v-on:click="itemPageCount(20)">20</li>
+									<li class="ppgItem" v-on:click="itemPageCount(25)">25</li>
+									<li class="ppgItem" v-on:click="itemPageCount(30)">30</li>
+								</ul>
+							</li>
+							<li class="totalRecords" v-if="pageCount <= totalRecords ? (actualCount = pageCount) : (actualCount = totalRecords)">{{ `${actualCount} of ${totalRecords} results` }}</li>
 						</ul>
 					</div>
 				</div>
@@ -125,11 +139,12 @@
 				pageCount: 10,
 				orderByCol: 'firstname',
 				listIndex: 1,
-				searchIn: ''
+				searchIn: '',
+				totalRecords: ''
 			};
 		},
 		mounted() {
-			this.openModelFunc();
+			this.materializeCssFunc();
 			this.getAllUsers();
 		},
 		methods: {
@@ -137,13 +152,17 @@
 				try {
 					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user`, 'GET', null, this.token)).json();
 					this.userData = [...result.records];
+					this.totalRecords = result.totalRecords;
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
 			},
-			openModelFunc() {
-				const elem = this.$refs.deleteUserModel;
+			materializeCssFunc() {
+				const elem = this.$refs.deleteUserModel; // need to look into this one
 				M.Modal.init(elem);
+
+				const elems = document.querySelectorAll('.dropdown-trigger');
+				M.Dropdown.init(elems);
 			},
 
 			async deleteUser() {
@@ -177,25 +196,28 @@
 					this.listIndex = this.page;
 				}
 				try {
-					let result = await (
-						await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}`, 'GET', null, this.token)
-					).json();
+					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&orderByCol=${this.orderByCol}`, 'GET', null, this.token)).json();
 					this.userData = [...result.records];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
 			},
-			async filterQuery(){
-				console.log(this.searchIn);
+			async filterQuery() {
 				try {
-					let result = await (
-						await utilities.apiCall(`${config.host}${config.port}/api/user?searchText=${this.searchIn}`, 'GET', null, this.token)
-					).json();
+					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?searchText=${this.searchIn}`, 'GET', null, this.token)).json();
 					this.userData = [...result.records];
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
-	
+			},
+			async itemPageCount(arg) {
+				this.pageCount = arg;
+				try {
+					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?pageCount=${this.pageCount}`, 'GET', null, this.token)).json();
+					this.userData = [...result.records];
+				} catch (error) {
+					console.log('Error in /api/user GET: ', error);
+				}
 			}
 		},
 		components: { NavBar, SideBar }
@@ -214,10 +236,19 @@
 	i:hover {
 		color: gray;
 	}
-	#searchInputContainer{
+	#searchInputContainer {
 		border: 2mm solid deepskyblue;
 		border-radius: 2mm;
 		max-width: 100%;
 		margin: 5mm;
+	}
+	.ppgItem {
+		color: black;
+	}
+	.totalRecords {
+		margin: 2mm;
+		padding: -0.2mm;
+		font-weight: bold;
+		/* border: 1mm solid deepskyblue; */
 	}
 </style>

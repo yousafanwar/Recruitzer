@@ -30,7 +30,7 @@ export const getUsers = async function (req, res) {
 	const offSet = ` offset ${(page - 1) * pageCount} limit ${pageCount} `;
 
 	let dbRes = await db.query('select count(users.id) as TotalRecords from public.users ' + whereClause);
-	const totalRecords = dbRes.rows[0].TotalRecords;
+	const totalRecords = dbRes.rows[0].totalrecords;
 
 	dbRes = await db.query(
 		'select users.id, users.firstName, users.lastName, users.DOB, users.cell, users.email, users.password, users.isDeleted, roles.title as role from public.users full outer join roles on users.roleid = roles.id ' +
@@ -39,10 +39,11 @@ export const getUsers = async function (req, res) {
 			order +
 			offSet
 	);
+
 	res.send({
-		page: page,
-		pageCount: pageCount,
-		totalRecords: totalRecords,
+		page,
+		pageCount,
+		totalRecords,
 		records: dbRes.rows
 	});
 };
