@@ -60,22 +60,12 @@
 								</a>
 							</li>
 
-							<li :class="[listIndex === 1 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(1)">
-								<a href="#!" :class="[listIndex === 1 ? 'white-text' : 'blue-text']">1</a>
-							</li>
-							<li :class="[listIndex === 2 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(2)">
-								<a href="#!" :class="[listIndex === 2 ? 'white-text' : 'blue-text']">2</a>
+
+							<li v-for="pageNumber in totalPages" :key="pageNumber" :class="[listIndex === pageNumber ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(pageNumber)">
+								<a href="#!" :class="[listIndex === pageNumber ? 'white-text' : 'blue-text']">{{ pageNumber }}</a>
 							</li>
 
-							<li :class="[listIndex === 3 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(3)">
-								<a href="#!" :class="[listIndex === 3 ? 'white-text' : 'blue-text']">3</a>
-							</li>
-							<li :class="[listIndex === 4 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(4)">
-								<a href="#!" :class="[listIndex === 4 ? 'white-text' : 'blue-text']">4</a>
-							</li>
-							<li :class="[listIndex === 4 ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(5)">
-								<a href="#!" :class="[listIndex === 5 ? 'white-text' : 'blue-text']">5</a>
-							</li>
+
 							<li class="waves-effect" v-on:click="pageSelector('moveRight')">
 								<a href="#!" class="blue-text">
 									<i class="material-icons">chevron_right</i>
@@ -88,11 +78,9 @@
 
 								<!-- Dropdown Structure -->
 								<ul id="dropdown1" class="dropdown-content">
-									<li class="ppgItem" v-on:click="itemPageCount(10)">10</li>
-									<li class="ppgItem" v-on:click="itemPageCount(15)">15</li>
-									<li class="ppgItem" v-on:click="itemPageCount(20)">20</li>
-									<li class="ppgItem" v-on:click="itemPageCount(25)">25</li>
-									<li class="ppgItem" v-on:click="itemPageCount(30)">30</li>
+									<li class="ppgItem" v-on:click="pageCount = 10, getAllUsers()">10</li>
+									<li class="ppgItem" v-on:click="pageCount = 20, getAllUsers()">20</li>
+									<li class="ppgItem" v-on:click="pageCount = 50, getAllUsers()">50</li>
 								</ul>
 							</li>
 							<li class="totalRecords" v-if="pageCount <= totalRecords ? (actualCount = pageCount) : (actualCount = totalRecords)">{{ `${actualCount} of ${totalRecords} results` }}</li>
@@ -140,6 +128,7 @@
 				orderByCol: 'firstname',
 				listIndex: 1,
 				searchIn: '',
+				totalPages: 20,
 				totalRecords: ''
 			};
 		},
@@ -150,9 +139,10 @@
 		methods: {
 			async getAllUsers() {
 				try {
-					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user`, 'GET', null, this.token)).json();
+					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}&searchText=${this.searchIn}`, 'GET', null, this.token)).json();
 					this.userData = [...result.records];
 					this.totalRecords = result.totalRecords;
+					// this.totalPages = this.totalRecords / this.pageCount; "THIS CODE CRASHES THE APP AS IT TRIES TO LOAD ALL THE PAGES AT ONCE"
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
@@ -182,7 +172,7 @@
 
 				this.userData.splice(index, 1);
 			},
-			async pageSelector(arg) {
+				pageSelector(arg) {
 				this.listIndex = arg;
 				if (typeof arg === 'number') {
 					this.page = arg;
@@ -195,12 +185,7 @@
 					this.page += 1;
 					this.listIndex = this.page;
 				}
-				try {
-					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&orderByCol=${this.orderByCol}`, 'GET', null, this.token)).json();
-					this.userData = [...result.records];
-				} catch (error) {
-					console.log('Error in /api/user GET: ', error);
-				}
+				this.getAllUsers();
 			},
 			async filterQuery() {
 				try {
@@ -210,15 +195,6 @@
 					console.log('Error in /api/user GET: ', error);
 				}
 			},
-			async itemPageCount(arg) {
-				this.pageCount = arg;
-				try {
-					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?pageCount=${this.pageCount}`, 'GET', null, this.token)).json();
-					this.userData = [...result.records];
-				} catch (error) {
-					console.log('Error in /api/user GET: ', error);
-				}
-			}
 		},
 		components: { NavBar, SideBar }
 	};
