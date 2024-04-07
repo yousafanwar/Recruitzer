@@ -54,23 +54,22 @@
 					</div>
 					<div class="card-action">
 						<ul class="pagination">
-							<li :class="[listIndex === 1 ? 'disabled' : '']" v-on:click="pageSelector('moveLeft')">
+							<li :class="[startPage >= 1 ? 'disabled' : '']" v-on:click="pageSelector('moveLeft')">
 								<a href="#!" class="blue-text">
-									<i class="material-icons" v-on:click="pageSelector('left')">chevron_left</i>
+									<i class="material-icons">chevron_left</i>
 								</a>
 							</li>
 
-
-							<li v-for="pageNumber in totalPages" :key="pageNumber" :class="[listIndex === pageNumber ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(pageNumber)">
-								<a href="#!" :class="[listIndex === pageNumber ? 'white-text' : 'blue-text']">{{ pageNumber }}</a>
+							<li v-for="pageNumber in renderBtn" :key="pageNumber.name" :class="[pageNumber.name === page ? 'active blue lighten-1' : 'waves-effect']" v-on:click="pageSelector(pageNumber.name)">
+								<a href="#!" :class="[pageNumber.name === page ? 'white-text' : 'blue-text']">{{ pageNumber.name }}</a>
 							</li>
-
 
 							<li class="waves-effect" v-on:click="pageSelector('moveRight')">
 								<a href="#!" class="blue-text">
 									<i class="material-icons">chevron_right</i>
 								</a>
 							</li>
+
 							<!-- Dropdown Trigger -->
 							<li>
 								<a class="dropdown-trigger btn" data-target="dropdown1" style="background-color: deepskyblue">{{ pageCount }}</a>
@@ -78,9 +77,9 @@
 
 								<!-- Dropdown Structure -->
 								<ul id="dropdown1" class="dropdown-content">
-									<li class="ppgItem" v-on:click="pageCount = 10, getAllUsers()">10</li>
-									<li class="ppgItem" v-on:click="pageCount = 20, getAllUsers()">20</li>
-									<li class="ppgItem" v-on:click="pageCount = 50, getAllUsers()">50</li>
+									<li class="ppgItem" v-on:click="(pageCount = 10), getAllUsers()">10</li>
+									<li class="ppgItem" v-on:click="(pageCount = 20), getAllUsers()">20</li>
+									<li class="ppgItem" v-on:click="(pageCount = 50), getAllUsers()">50</li>
 								</ul>
 							</li>
 							<li class="totalRecords" v-if="pageCount <= totalRecords ? (actualCount = pageCount) : (actualCount = totalRecords)">{{ `${actualCount} of ${totalRecords} results` }}</li>
@@ -128,21 +127,50 @@
 				orderByCol: 'firstname',
 				listIndex: 1,
 				searchIn: '',
-				totalPages: 20,
-				totalRecords: ''
+				totalPages: '',
+				totalRecords: '',
+				endPage: 5
 			};
 		},
 		mounted() {
 			this.materializeCssFunc();
 			this.getAllUsers();
 		},
+		computed: {
+			startPage() {
+				if (this.page === 1) {
+					return 1;
+				} else if (this.page === this.totalPages) {
+					return this.totalPages - 3;
+				} else {
+					return this.page - 1;
+				}
+			},
+			renderBtn() {
+				let btnList = [];
+				for (let i = this.startPage; i <= Math.min(this.totalPages, this.startPage + 3 - 1); i++) {
+					btnList.push({
+						name: i,
+						isDisabled: i === this.page
+					});
+				}
+				return btnList;
+			}
+		},
 		methods: {
 			async getAllUsers() {
 				try {
-					let result = await (await utilities.apiCall(`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}&searchText=${this.searchIn}`, 'GET', null, this.token)).json();
+					let result = await (
+						await utilities.apiCall(
+							`${config.host}${config.port}/api/user?page=${this.page}&pageCount=${this.pageCount}&orderByCol=${this.orderByCol}&searchText=${this.searchIn}`,
+							'GET',
+							null,
+							this.token
+						)
+					).json();
 					this.userData = [...result.records];
 					this.totalRecords = result.totalRecords;
-					// this.totalPages = this.totalRecords / this.pageCount; "THIS CODE CRASHES THE APP AS IT TRIES TO LOAD ALL THE PAGES AT ONCE"
+					this.totalPages = this.totalRecords / this.pageCount;
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
@@ -172,19 +200,15 @@
 
 				this.userData.splice(index, 1);
 			},
-				pageSelector(arg) {
-				this.listIndex = arg;
+			pageSelector(arg) {
 				if (typeof arg === 'number') {
 					this.page = arg;
+				} else if (arg === 'moveLeft') {
+					this.page = Math.max(this.page - 1, 1);
+				} else if (arg === 'moveRight') {
+					this.page = Math.min(this.page + 1, this.totalPages);
 				}
-				if (arg === 'moveLeft') {
-					this.page -= 1;
-					this.listIndex = this.page;
-				}
-				if (arg === 'moveRight') {
-					this.page += 1;
-					this.listIndex = this.page;
-				}
+
 				this.getAllUsers();
 			},
 			async filterQuery() {
@@ -194,7 +218,7 @@
 				} catch (error) {
 					console.log('Error in /api/user GET: ', error);
 				}
-			},
+			}
 		},
 		components: { NavBar, SideBar }
 	};
